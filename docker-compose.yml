@@ -1,38 +1,53 @@
-version: '3.2'
-
 services:
 
-  frontend:
-    build: frontend
+  nginx:
+    container_name: ${APP_NAME}_nginx
+    image: nginx:${NGINX_VERSION}
     ports:
-      - 20080:80
+      - 80:80
     volumes:
-      # Re-use local composer cache via host-volume
-      - ~/.composer-docker/cache:/root/.composer/cache:delegated
-      # Mount source-code for development
-      - ./:/app
+      - ./.docker/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - ./.docker/log/nginx:/var/log/nginx
+      - ./:/var/www/html
+    depends_on:
+      - php-fpm
+      - mariadb
+    networks:
+      - app-network
 
-  backend:
-    build: backend
+  php-fpm:
+    container_name: ${APP_NAME}_php-fpm
+    build:
+      context: ./.docker/php-fpm
+      args:
+        PHP_FPM_VERSION: ${PHP_FPM_VERSION}
     ports:
-      - 21080:80
+      - 9000:9000
     volumes:
-      # Re-use local composer cache via host-volume
-      - ~/.composer-docker/cache:/root/.composer/cache:delegated
-      # Mount source-code for development
-      - ./:/app
+      - ./:/var/www/html
+    depends_on:
+      - mariadb
+    networks:
+      - app-network
 
-  mysql:
-    image: mysql:5.7
+  mariadb:
+    container_name: ${APP_NAME}_mariadb
+    image: mariadb:${MARIADB_VERSION}
+    ports:
+      - 3306:3306
+    volumes:
+      - ./.docker/mariadb/data/db/mysql:/var/lib/mysql
+      - ./.docker/mariadb/conf.d/my.conf:/etc/mysql/conf.d/my.cnf
+      - ./:/var/www/html
     environment:
-      - MYSQL_ROOT_PASSWORD=verysecret
-      - MYSQL_DATABASE=yii2advanced
-      - MYSQL_USER=yii2advanced
-      - MYSQL_PASSWORD=secret
+      - MYSQL_DATABASE=${MARIADB_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+      - MYSQL_USER=${MARIADB_USER}
+      - MYSQL_PASSWORD=${MARIADB_PASSWORD}
+      - MYSQL_ROOT_HOST=%
+    networks:
+      - app-network
 
-  #pgsql:
-  #  image: postgres:9.5
-  #  environment:
-  #    - POSTGRES_DB=yii2advanced
-  #    - POSTGRES_USER=yii2advanced
-  #    - POSTGRES_PASSWORD=secret
+networks:
+  app-network:
+    driver: bridge
