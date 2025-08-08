@@ -10,7 +10,7 @@ class m250808_042325_create_country_table extends Migration
     {
         $this->createTable(self::TABLE_NAME, [
             'id'         => $this->primaryKey(),
-            'name'       => $this->string()->notNull()->comment('Название страны'),
+            'name'       => $this->string()->notNull()->unique()->comment('Название страны'),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ]);
