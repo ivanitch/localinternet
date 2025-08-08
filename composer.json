@@ -1,6 +1,6 @@
 {
-    "name": "yiisoft/yii2-app-advanced",
-    "description": "Yii 2 Advanced Project Template",
+    "name": "ivanitch/localinternet",
+    "description": "Тестовое задание на вакансию `Yii2 разработчик`: https://hh.ru/vacancy/123264006 | https://docs.google.com/document/d/1dVgyqqmT4ZXXHZMFvkv9CQhfMXQtzRQpxqWbgJBPKJ4/edit?tab=t.0",
     "keywords": ["yii2", "framework", "advanced", "project template"],
     "homepage": "https://www.yiiframework.com/",
     "type": "project",
@@ -14,8 +14,8 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": ">=7.4.0",
-        "yiisoft/yii2": "~2.0.45",
+        "php": ">=8.4",
+        "yiisoft/yii2": "~2.0.53",
         "yiisoft/yii2-bootstrap5": "~2.0.2",
         "yiisoft/yii2-symfonymailer": "~2.0.3"
     },
@@ -29,7 +29,8 @@
         "codeception/module-asserts": "^3.0 || ^1.1",
         "codeception/module-yii2": "^1.1",
         "codeception/module-filesystem": "^3.0 || ^2.0 || ^1.1",
-        "codeception/verify": "^3.0 || ^2.2"
+        "codeception/verify": "^3.0 || ^2.2",
+        "symfony/var-dumper": "^7.3"
     },
     "autoload-dev": {
         "psr-4": {
@@ -39,6 +40,7 @@
         }
     },
     "config": {
+        "sort-packages": true,
         "allow-plugins": {
             "yiisoft/yii2-composer" : true
         },
