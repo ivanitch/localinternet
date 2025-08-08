@@ -44,7 +44,6 @@ services:
       - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
       - MYSQL_USER=${MARIADB_USER}
       - MYSQL_PASSWORD=${MARIADB_PASSWORD}
-      - MYSQL_ROOT_HOST=%
     networks:
       - app-network
 

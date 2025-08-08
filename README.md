@@ -38,3 +38,11 @@ php init
 ```bash
 composer install
 ```
+
+## Дополнительно
+- Выполнить миграции: `php yii migrate`
+- Зайти на сайт по `url`: http://localhost
+- Зарегистрироваться по `url`: http://localhost/site/signup
+- `Url` для подтверждения регистрации можно найти в директории `frontend/runtime/mail` или в БД изменить поле `status` на `10`
+- Войти на сайт по `url`: http://localhost/site/login
+- Админка: http://admin.localhost (в файл `/etc/hosts` добавить: `127.0.0.1 admin.localhost`)
