@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace common\models;
 
 use yii\db\ActiveQuery;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "city".
@@ -30,7 +31,8 @@ class City extends BaseActiveRecordModel
     {
         return [
             [['created_at', 'updated_at'], 'safe'],
-            [['name', 'country_id'], 'required'],
+            ['name', 'required', 'message' => 'Название города не может быть пустым.'],
+            ['country_id', 'required', 'message' => 'Необходимо выбрать страну.'],
             [['country_id'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [
@@ -52,6 +54,11 @@ class City extends BaseActiveRecordModel
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+
+    public function countriesList(): array
+    {
+        return ArrayHelper::map(Country::find()->orderBy('name')->asArray()->all(), 'id', 'name');
     }
 
     public function getBanks(): ActiveQuery

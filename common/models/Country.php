@@ -27,7 +27,7 @@ class Country extends BaseActiveRecordModel
     {
         return [
             [['created_at', 'updated_at'], 'safe'],
-            [['name'], 'required'],
+            [['name'], 'required', 'message' => 'Название страны не может быть пустым.'],
             [['name'], 'unique'],
             [['name'], 'string', 'max' => 255],
         ];

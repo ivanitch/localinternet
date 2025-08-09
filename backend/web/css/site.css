@@ -88,3 +88,19 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+h1 {
+    margin-bottom: 30px;
+}
+
+.mt-15 {
+    margin-top: 15px !important;
+}
+
+.form-group {
+    margin-bottom: 30px;
+}
+.badge {
+    border-radius: 3px;
+}
+

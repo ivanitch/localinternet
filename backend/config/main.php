@@ -42,6 +42,9 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+
+                '<controller:country|city|bank|service>/<action:\w+>' => '<controller>/<action>',
+                '<controller:country|city|bank|service>' => '<controller>/index',
             ],
         ],
     ],

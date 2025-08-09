@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace common\models;
 
 use yii\db\ActiveQuery;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 
 /**
  * This is the model class for table "bank".
@@ -18,9 +20,17 @@ use yii\db\ActiveQuery;
  *
  * @property City[] $cities
  * @property Service[] $services
+ *
+ * @property array $cities_ids
+ * @property array $services_ids
  */
 class Bank extends BaseActiveRecordModel
 {
+    const int STATUS_DELETED = 0;
+    const int STATUS_ACTIVE = 1;
+
+    public array $cities_ids = [];
+    public array $services_ids = [];
 
     public static function tableName(): string
     {
@@ -30,7 +40,7 @@ class Bank extends BaseActiveRecordModel
     public function rules(): array
     {
         return [
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'cities_ids', 'services_ids'], 'safe'],
             [['description'], 'default', 'value' => null],
             [['status'], 'default', 'value' => 1],
             [['name'], 'required'],
@@ -61,4 +71,30 @@ class Bank extends BaseActiveRecordModel
     {
         return $this->hasMany(Service::class, ['id' => 'service_id'])->viaTable('{{%bank_service}}', ['bank_id' => 'id']);
     }
+
+    public static function getStatusesList(): array
+    {
+        return [
+            self::STATUS_ACTIVE  => 'Активный',
+            self::STATUS_DELETED => 'Удалён',
+        ];
+    }
+
+    public static function statusLabel(int $status): string
+    {
+        $class = match ($status) {
+            self::STATUS_DELETED => 'badge bg-secondary',
+            default => 'badge bg-success',
+        };
+
+        return Html::tag('span', ArrayHelper::getValue(self::getStatusesList(), $status), [
+            'class' => $class,
+        ]);
+    }
+
+    public static function statusName(int $status): string
+    {
+        return ArrayHelper::getValue(self::getStatusesList(), $status);
+    }
+
 }
