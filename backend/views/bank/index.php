@@ -4,11 +4,11 @@ use common\models\Bank;
 use common\models\City;
 use common\models\Country;
 use common\models\Service;
+use yii\grid\ActionColumn;
+use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\grid\ActionColumn;
-use yii\grid\GridView;
 use yii\widgets\Pjax;
 
 /**
@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('<i class="bi bi-plus-square-fill"></i> Добавить банк', ['create'], ['class' => 'btn btn-outline-success']) ?>
+        <?= Html::a('Добавить банк', ['create'], ['class' => 'btn btn-outline-success']) ?>
     </p>
 
     <?php Pjax::begin(); ?>
@@ -146,12 +146,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
-
     <?php Pjax::end(); ?>
-
 </div>
 <?php
-// JavaScript-код должен быть вне Pjax-контейнера
 $this->registerJs(<<<JS
     $(document).on('change', '#bank-search-country_id', function() {
         var countryId = $(this).val();
@@ -177,11 +174,9 @@ $this->registerJs(<<<JS
                 }
             });
         }
-    });
-
-    // Важно: Эта строка гарантирует, что список городов будет правильным, 
-    // если вы перезагружаете страницу с уже установленным фильтром.
+    });    
     $('#bank-search-country_id').trigger('change');
-JS, \yii\web\View::POS_READY);
+JS
+);
 ?>
 

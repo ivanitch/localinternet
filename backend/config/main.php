@@ -9,6 +9,7 @@ $params = array_merge(
 
 return [
     'id' => 'app-backend',
+    'language' => 'ru',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
@@ -42,7 +43,6 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-
                 '<controller:country|city|bank|service>/<action:\w+>' => '<controller>/<action>',
                 '<controller:country|city|bank|service>' => '<controller>/index',
             ],

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace common\models;
 
+use common\models\query\BankQuery;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -92,9 +93,11 @@ class Bank extends BaseActiveRecordModel
         ]);
     }
 
-    public static function statusName(int $status): string
+    /**
+     * @return BankQuery
+     */
+    public static function find(): BankQuery
     {
-        return ArrayHelper::getValue(self::getStatusesList(), $status);
+        return new BankQuery(get_called_class());
     }
-
 }
