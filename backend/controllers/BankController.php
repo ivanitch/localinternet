@@ -52,9 +52,22 @@ class BankController extends Controller
         $searchModel  = new BankSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
+        $countries = ArrayHelper::map(Country::find()->all(), 'id', 'name');
+
+        $citiesQuery = City::find();
+        if ($searchModel->country_id) {
+            $citiesQuery->where(['country_id' => $searchModel->country_id]);
+        }
+        $cities = ArrayHelper::map($citiesQuery->all(), 'id', 'name');
+
+        $services = ArrayHelper::map(Service::find()->all(), 'id', 'name');
+
         return $this->render('index', [
             'searchModel'  => $searchModel,
             'dataProvider' => $dataProvider,
+            'countries'    => $countries,
+            'cities'       => $cities,
+            'services'     => $services,
         ]);
     }
 
@@ -183,7 +196,7 @@ class BankController extends Controller
      */
     public function actionDelete(int $id): Response
     {
-        $model = $this->findModel($id);
+        $model         = $this->findModel($id);
         $model->status = Bank::STATUS_DELETED;
         $model->save(false);
 
@@ -200,11 +213,31 @@ class BankController extends Controller
      */
     public function actionRestore(int $id): Response
     {
-        $model = $this->findModel($id);
+        $model         = $this->findModel($id);
         $model->status = Bank::STATUS_ACTIVE;
         $model->save(false);
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Возвращает список городов в формате для выбранной страны
+     *
+     * @param int $id
+     * @return Response
+     */
+    public function actionGetCitiesByCountry(int $id): Response
+    {
+        $cities = City::find()
+            ->where(['country_id' => $id])
+            ->all();
+
+        $response = [];
+        foreach ($cities as $city) {
+            $response[] = ['id' => $city->id, 'name' => $city->name];
+        }
+
+        return $this->asJson($response);
     }
 
     /**

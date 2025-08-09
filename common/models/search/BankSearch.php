@@ -13,17 +13,20 @@ use yii\data\ActiveDataProvider;
  */
 class BankSearch extends Bank
 {
+    public ?string $country_id = null;
+    public ?string $city_id = null;
+    public ?string $service_id = null;
+
     public function rules(): array
     {
         return [
+            [['name', 'description', 'country_id', 'city_id', 'service_id'], 'safe'],
             [['id', 'status'], 'integer'],
-            [['name', 'description'], 'safe'],
         ];
     }
 
     public function scenarios(): array
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
@@ -37,33 +40,59 @@ class BankSearch extends Bank
      */
     public function search(array $params, string $formName = null): ActiveDataProvider
     {
-        $query = Bank::find()
-            ->select(['id', 'name', 'description', 'status']);
-
-        // add conditions that should always apply here
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
+        $query = Bank::find();
 
         $this->load($params, $formName);
 
+        $query->joinWith(['cities' => function ($query) {
+            $query->joinWith(['country']);
+        }])->joinWith(['services']);
+
+        $query->groupBy(['bank.id']);
+
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
+            $query->where('0=1');
         }
 
-        // grid filtering conditions
+        // Добавляем условия фильтрации
         $query->andFilterWhere([
-            'id' => $this->id,
-            'status' => $this->status,
-            //'created_at' => $this->created_at,
-            //'updated_at' => $this->updated_at,
+            'bank.status' => $this->status,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'description', $this->description]);
+        $query->andFilterWhere(['like', 'bank.name', $this->name])
+            ->andFilterWhere(['like', 'bank.description', $this->description])
+            ->andFilterWhere(['country.id' => $this->country_id])
+            ->andFilterWhere(['city.id' => $this->city_id])
+            ->andFilterWhere(['service.id' => $this->service_id]);
+
+        $countQuery = clone $query;
+        $totalCount = $countQuery->count();
+
+        $dataProvider = new ActiveDataProvider([
+            'query'      => $query,
+            'totalCount' => $totalCount,
+            'sort'       => [
+                'attributes' => [
+                    'name',
+                    'description',
+                    'status',
+                    'country_id' => [
+                        'asc'  => ['country.name' => SORT_ASC],
+                        'desc' => ['country.name' => SORT_DESC],
+                    ],
+                    'city_id'    => [
+                        'asc'  => ['city.name' => SORT_ASC],
+                        'desc' => ['city.name' => SORT_DESC],
+                    ],
+                    'service_id' => [
+                        'asc'  => ['service.name' => SORT_ASC],
+                        'desc' => ['service.name' => SORT_DESC],
+                    ],
+                ],
+            ],
+        ]);
+
+        $query->select(['bank.*']);
 
         return $dataProvider;
     }

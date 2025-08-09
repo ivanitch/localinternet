@@ -1,17 +1,26 @@
 <?php
 
 use common\models\Bank;
+use common\models\City;
+use common\models\Country;
+use common\models\Service;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 
-/** @var yii\web\View $this */
-/** @var common\models\search\BankSearch $searchModel */
-/** @var yii\data\ActiveDataProvider $dataProvider */
+/**
+ * @var yii\web\View $this
+ * @var common\models\search\BankSearch $searchModel
+ * @var yii\data\ActiveDataProvider $dataProvider
+ * @var Country[] $countries
+ * @var City[] $cities
+ * @var Service[] $services
+ */
 
-$this->title                   = 'Banks';
+$this->title                   = 'Банки';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="bank-index">
@@ -19,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Bank', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('<i class="bi bi-plus-square-fill"></i> Добавить банк', ['create'], ['class' => 'btn btn-outline-success']) ?>
     </p>
 
     <?php Pjax::begin(); ?>
@@ -30,20 +39,50 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel'  => $searchModel,
         'columns'      => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            //'id',
             'name',
             'description:ntext',
             [
                 'attribute' => 'status',
-                'value'     => function (Bank $model) {
+                'value'     => function ($model) {
                     return Bank::statusLabel($model->status);
                 },
                 'filter'    => Bank::getStatusesList(),
                 'format'    => 'raw',
             ],
-            //'created_at:datetime',
-            //'updated_at:datetime',
+            [
+                'attribute'          => 'country_id',
+                'label'              => 'Страна',
+                'value'              => function ($model) {
+                    $countries = ArrayHelper::getColumn($model->cities, 'country.name');
+                    return implode(', ', array_unique($countries));
+                },
+                'filter'             => $countries,
+                'filterInputOptions' => [
+                    'class' => 'form-control',
+                    'id'    => 'bank-search-country_id',
+                ],
+            ],
+            [
+                'attribute'          => 'city_id',
+                'label'              => 'Города',
+                'value'              => function ($model) {
+                    return implode(', ', ArrayHelper::getColumn($model->cities, 'name'));
+                },
+                'filter'             => $cities,
+                'filterInputOptions' => [
+                    'class' => 'form-control',
+                    'id'    => 'bank-search-city_id',
+                ],
+            ],
+            [
+                'attribute'          => 'service_id',
+                'label'              => 'Услуги',
+                'value'              => function ($model) {
+                    return implode(', ', ArrayHelper::getColumn($model->services, 'name'));
+                },
+                'filter'             => $services,
+                'filterInputOptions' => ['class' => 'form-control'],
+            ],
             [
                 'class'          => ActionColumn::class,
                 'template'       => '{view} {update} {delete} {restore}',
@@ -111,3 +150,38 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php Pjax::end(); ?>
 
 </div>
+<?php
+// JavaScript-код должен быть вне Pjax-контейнера
+$this->registerJs(<<<JS
+    $(document).on('change', '#bank-search-country_id', function() {
+        var countryId = $(this).val();
+        var cityDropdown = $('#bank-search-city_id');
+        
+        cityDropdown.html('');
+        
+        if (countryId) {
+            $.ajax({
+                url: '/bank/get-cities-by-country',
+                type: 'GET',
+                data: { id: countryId },
+                success: function(data) {
+                    $.each(data, function(index, city) {
+                        cityDropdown.append($('<option>', {
+                            value: city.id,
+                            text: city.name
+                        }));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Ошибка загрузки городов: ' + error);
+                }
+            });
+        }
+    });
+
+    // Важно: Эта строка гарантирует, что список городов будет правильным, 
+    // если вы перезагружаете страницу с уже установленным фильтром.
+    $('#bank-search-country_id').trigger('change');
+JS, \yii\web\View::POS_READY);
+?>
+

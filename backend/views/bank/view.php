@@ -8,7 +8,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var common\models\Bank $model */
 
-$this->title = $model->name;
+$this->title                   = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Banks', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -21,47 +21,47 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
-            'data' => [
+            'data'  => [
                 'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
+                'method'  => 'post',
             ],
         ]) ?>
     </p>
 
     <?= DetailView::widget([
-        'model' => $model,
+        'model'      => $model,
         'attributes' => [
             'id',
             'name',
             'description:ntext',
             [
                 'attribute' => 'status',
-                'value' => $model::statusLabel($model->status),
-                'format' => 'raw',
+                'value'     => $model::statusLabel($model->status),
+                'format'    => 'raw',
             ],
             [
-                'label' => 'Города',
-                'value' => function($model) {
-                    $countries = [];
+                'label'  => 'Города',
+                'value'  => function (Bank $model) {
+                    $citiesByCountry = [];
                     foreach ($model->cities as $city) {
-                        $countries[$city->country->name][] = $city->name;
+                        $countryName                     = $city->country->name;
+                        $citiesByCountry[$countryName][] = $city->name;
                     }
-                    $output = '';
-                    foreach ($countries as $countryName => $cityNames) {
-                        $output .= '<b>' . $countryName . '</b><br>';
-                        foreach ($cityNames as $cityName) {
-                            $output .= '- ' . $cityName . '<br>';
-                        }
+
+                    $output = [];
+                    foreach ($citiesByCountry as $countryName => $cityNames) {
+                        $output[] = "$countryName: " . Yii::$app->formatter->asNtext(implode(", ", $cityNames));
                     }
-                    return $output;
+
+                    return Yii::$app->formatter->asNtext(implode("\n", $output));
                 },
                 'format' => 'raw',
             ],
             [
-                'label' => 'Услуги',
-                'value' => function($model) {
+                'label'  => 'Услуги',
+                'value'  => function (Bank $model) {
                     $services = ArrayHelper::getColumn($model->services, 'name');
-                    return implode('<br>', $services);
+                    return Yii::$app->formatter->asNtext(implode("\n", $services));
                 },
                 'format' => 'raw',
             ],
