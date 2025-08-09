@@ -46,3 +46,8 @@ composer install
 - `Url` для подтверждения регистрации можно найти в директории `frontend/runtime/mail` или в БД изменить поле `status` на `10`
 - Войти на сайт по `url`: http://localhost/site/login
 - Админка: http://admin.localhost (в файл `/etc/hosts` добавить: `127.0.0.1 admin.localhost`)
+
+## Генерация данных
+```bash
+php yii faker/generate
+```

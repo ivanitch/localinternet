@@ -11,6 +11,7 @@ class BankController extends Controller
     public function actionIndex(): string
     {
         $query = Bank::find()
+            ->active()
             ->joinWith(['cities' => function ($query) {
                 $query->joinWith(['country']);
             }])

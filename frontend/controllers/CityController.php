@@ -15,7 +15,7 @@ class CityController extends Controller
                 'city.id',
                 'city.name',
                 'city.country_id',
-                'country.name'
+                'country.name AS country_name'
             ])
             ->joinWith('country');
 

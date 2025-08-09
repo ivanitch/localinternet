@@ -17,15 +17,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'columns'      => [
+        'columns' => [
             [
                 'attribute' => 'name',
-                'label'     => 'Город',
+                'label' => 'Название города',
             ],
             [
-                'label'     => 'Страна',
+                'label' => 'Страна',
                 'attribute' => 'country_id',
-                'value'     => 'country.name',
+                'value' => 'country.name'
             ],
         ],
     ]); ?>
