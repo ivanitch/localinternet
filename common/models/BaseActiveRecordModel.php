@@ -20,4 +20,11 @@ class BaseActiveRecordModel extends ActiveRecord
             ],
         ];
     }
+
+    public function fields(): array
+    {
+        $fields = parent::fields();
+        unset($fields['updated_at'], $fields['created_at']);
+        return $fields;
+    }
 }

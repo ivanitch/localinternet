@@ -70,4 +70,13 @@ class City extends BaseActiveRecordModel
     {
         return $this->hasOne(Country::class, ['id' => 'country_id']);
     }
+
+    public function fields(): array
+    {
+        $fields = parent::fields();
+        unset($fields['country_id']);
+        $fields['country'] = fn(): string => $this->country->name;
+
+        return $fields;
+    }
 }

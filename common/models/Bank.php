@@ -100,4 +100,17 @@ class Bank extends BaseActiveRecordModel
     {
         return new BankQuery(get_called_class());
     }
+
+    /**
+     * @return array
+     */
+    public function fields(): array
+    {
+        $fields = parent::fields();
+        unset($fields['status']);
+        $fields['cities']   = 'cities';
+        $fields['services'] = 'services';
+
+        return $fields;
+    }
 }

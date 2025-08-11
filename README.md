@@ -51,3 +51,106 @@ composer install
 ```bash
 php yii faker/generate
 ```
+
+## API
+
+### Список Банков
+```bash
+GET http://api.localhost
+```
+
+### Полная информация по банку
+```bash
+http://api.localhost/v1/banks/7
+```
+ANSWER:
+```json
+{
+    "id": 7,
+    "name": "ПАО РемМеталТрансНаладка",
+    "description": "Ut dolorem asperiores ea praesentium. Corrupti at ea odit. At mollitia magnam tempora nam.",
+    "cities": [
+        {
+            "id": 106,
+            "name": "Burg",
+            "country": "Фарерские острова"
+        }
+    ],
+    "services": [
+        {
+            "id": 3,
+            "name": "sit"
+        },
+        {
+            "id": 25,
+            "name": "harum"
+        },
+        {
+            "id": 37,
+            "name": "ex"
+        },
+        {
+            "id": 40,
+            "name": "quo"
+        }
+    ]
+}
+```
+
+### Обновление данных банка
+```
+PUT http://api.localhost/v1/banks/31
+```
+BODY:
+```json
+{
+    "name": "Новое название банка",
+    "description": "Обновленное описание.",
+    "status": 1,
+    "city_ids": [1, 5, 8],
+    "service_ids": [10, 25]
+}
+```
+ANSWER:
+```json
+{
+    "id": 31,
+    "name": "Новое название банка",
+    "description": "Обновленное описание.",
+    "cities": [
+        {
+            "id": 1,
+            "name": "Павловский Посад",
+            "country": "Антарктида"
+        },
+        {
+            "id": 5,
+            "name": "DuhamelBourg",
+            "country": "Новая Каледония"
+        },
+        {
+            "id": 7,
+            "name": "Cottbus",
+            "country": "Панама"
+        }
+    ],
+    "services": [
+        {
+            "id": 10,
+            "name": "odio"
+        },
+        {
+            "id": 25,
+            "name": "harum"
+        }
+    ]
+}
+```
+
+### "Мягкое" удаление банка
+```bash
+DELETE http://localhost/api/banks/34
+```
+
+
+
